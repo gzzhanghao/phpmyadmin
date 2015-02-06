@@ -75,6 +75,11 @@ var indexes = [];
 var fulltext_indexes = [];
 
 /**
+ * @var query that is editing by user.
+ */
+var unfinished = '';
+
+/**
  * Make sure that ajax requests will not be cached
  * by appending a random variable to their parameters
  */
@@ -692,11 +697,14 @@ AJAX.registerOnload('functions.js', function () {
     function UpdateIdleTime() {
         var href = 'index.php';
         var params = {
-                'ajax_request' : true,
-                'token' : PMA_commonParams.get('token'),
-                'db' : PMA_commonParams.get('db'),
-                'access_time':_idleSecondsCounter
-            };
+            'ajax_request' : true,
+            'token' : PMA_commonParams.get('token'),
+            'db' : PMA_commonParams.get('db'),
+            'access_time':_idleSecondsCounter
+        };
+        if (typeof unfinished !== 'undefined') {
+            params.unfinished = unfinished;
+        }
         $.ajax({
                 type: 'POST',
                 url: href,
@@ -1662,6 +1670,10 @@ AJAX.registerOnload('functions.js', function () {
         }
     }
 });
+
+function saveUnfinishedQuery(doc) {
+    unfinished = doc.getValue();
+}
 
 /**
  * "inputRead" event handler for CodeMirror SQL query editors for autocompletion
@@ -4125,6 +4137,7 @@ AJAX.registerOnload('functions.js', function () {
                 mode: "text/x-mysql",
                 lineWrapping: true
             });
+            codemirror_editor.on("change", saveUnfinishedQuery);
             codemirror_editor.on("inputRead", codemirrorAutocompleteOnInputRead);
             codemirror_editor.focus();
             $(codemirror_editor.getWrapperElement()).bind(

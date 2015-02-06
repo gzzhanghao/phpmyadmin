@@ -26,6 +26,11 @@ require_once 'libraries/sql_query_form.lib.php';
 /**
  * Query box, bookmark, insert data from textfile
  */
-$response->addHTML(PMA_getHtmlForSqlQueryForm());
+$unfinished = '';
+if (isset($_SESSION['unfinished'])) {
+    $unfinished = $_SESSION['unfinished'];
+    unset($_SESSION['unfinished']);
+}
+$response->addHTML(PMA_getHtmlForSqlQueryForm($unfinished));
 
 ?>
