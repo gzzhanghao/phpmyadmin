@@ -55,7 +55,7 @@ canvas.pmd * {
 }
 
 .pmd_tab .header {
-    background-image: url(<?php echo $headerImg; ?>);
+    background-image: url(<?php echo $_SESSION['PMA_Theme']->getImgPath('pmd/Header.png'); ?>);
     background-repeat: repeat-x;
 }
 
