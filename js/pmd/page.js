@@ -7,36 +7,39 @@
 
 function Page (page) {
 
-    var root;
-
-    var tableMap = {};
+    var root, relations, databases;
 
     root = e('#designer', [
         
         e('#header', [ e('#title', [ page.name ]) ]),
 
-        e('#relations', _.map(page.relations, function (relation) {
-            return relation.element = Relation(relation);
-        })).on('update', function (e, event) {
-            console.log(event);
-        }),
+        relations = e('#relations',
+            _.map(page.relations, function (relation) {
+                return relation.element = Relation(relation);
+            })
+        ),
 
         e('#databases', _.map(page.databases, function (database) {
-
-            var databaseName = database.name;
-
-            return e('.database', _.map(database.tables, function (table) {
-                return (tableMap[databaseName + '.' + table.name] = table).element = Table(table);
-            })).on('moved', function (e, event) {
-                _.map(page.relations, function (relation) {
-                    relation.element.trigger('update', event);
-                });
+            return e('.database', 
+                _.map(database.tables, function (table) {
+                    return table.element = Table(table);
+                })
+            ).on('moved selected', function (e, event) {
+                event.database = database;
             });
         }))
     ]);
 
-    root.on('ready', function () {
-        console.log(this);
+    relations.on('update', function (e, event) {
+        // body...
+    });
+
+    root.on('moved', function (e, event) {
+        console.log(event);
+    })
+
+    root.on('selected', function (e, event) {
+        console.log(event);
     });
 
     return root;

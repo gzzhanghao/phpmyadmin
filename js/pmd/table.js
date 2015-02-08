@@ -33,7 +33,7 @@ function Table (table) {
      * When the element was selected
      */
     root.on('mousedown', function (event) {
-        
+
         // Saving current state
         rootX = parseFloat(root.css('left'));
         rootY = parseFloat(root.css('top'));
@@ -53,6 +53,10 @@ function Table (table) {
         });
 
         return prevent(event);
+    });
+
+    columns.on('selected', function (e, event) {
+        event.table = table;
     });
 
     /**
@@ -91,7 +95,6 @@ function Table (table) {
             root.resize(rootW + deltaX);
         }
         return prevent(event);
-
     });
 
     /**
