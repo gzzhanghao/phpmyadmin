@@ -598,3 +598,38 @@ h2.active {
     position: absolute;
     left: 0;
 }
+
+.table {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: white;
+    border: 1px solid #ccc;
+    overflow: hidden;
+}
+
+.table .header,
+.table .column {
+    padding: 5px;
+}
+
+.table .header {
+    cursor: move;
+    background: #efefef;
+}
+
+.table .column {
+    padding-right: 2rem;
+    cursor: pointer;
+}
+
+.table .sizer {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    cursor: ew-resize;
+}
+
+#tables {
+    position: relative;
+}

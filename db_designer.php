@@ -118,47 +118,51 @@ $header->setBodyId('pmd_body');
 
 $scripts  = $header->getScripts();
 $scripts->addFile('jquery/jquery.fullscreen.js');
-$scripts->addFile('pmd/designer_db.js');
-$scripts->addFile('pmd/designer_objects.js');
-$scripts->addFile('pmd/designer_page.js');
-$scripts->addFile('pmd/history.js');
-$scripts->addFile('pmd/move.js');
-$scripts->addFile('pmd/iecanvas.js', true);
-$scripts->addFile('pmd/init.js');
+$scripts->addFile('underscore.js');
+$scripts->addFile('pmd/designer.js');
+// $scripts->addFile('pmd/designer_db.js');
+// $scripts->addFile('pmd/designer_objects.js');
+// $scripts->addFile('pmd/designer_page.js');
+// $scripts->addFile('pmd/history.js');
+// $scripts->addFile('pmd/move.js');
+// $scripts->addFile('pmd/iecanvas.js', true);
+// $scripts->addFile('pmd/init.js');
 
 require 'libraries/db_common.inc.php';
 require 'libraries/db_info.inc.php';
 
 // Embed some data into HTML, later it will be read
 // by pmd/init.js and converted to JS variables.
-$response->addHTML(
-    PMA_getHtmlForJSFields(
-        $script_tables, $script_contr, $script_display_field, $display_page
-    )
-);
-$response->addHTML(
-    PMA_getDesignerPageTopMenu(isset($_REQUEST['query']), $selected_page)
-);
+// $response->addHTML(
+//     PMA_getHtmlForJSFields(
+//         $script_tables, $script_contr, $script_display_field, $display_page
+//     )
+// );
+// $response->addHTML(
+//     PMA_getDesignerPageTopMenu(isset($_REQUEST['query']), $selected_page)
+// );
+$response->addHTML('<div id="designer-container"></div>');
+$response->addHTML('<script>var a =' . json_encode($GLOBALS['PMD']) . ';</script>');
+// $response->addHTML('<div id="canvas_outer">');
+// $response->addHTML('<form action="" id="container-form" method="post" name="form1">');
 
-$response->addHTML('<div id="canvas_outer">');
-$response->addHTML('<form action="" id="container-form" method="post" name="form1">');
+// $response->addHTML(PMA_getHTMLCanvas());
+// $response->addHTML(PMA_getHTMLTableList($tab_pos, $display_page));
 
-$response->addHTML(PMA_getHTMLCanvas());
-$response->addHTML(PMA_getHTMLTableList($tab_pos, $display_page));
+// $response->addHTML(
+//     PMA_getDatabaseTables(
+//         $tab_pos, $display_page, $tab_column,
+//         $tables_all_keys, $tables_pk_or_unique_keys
+//     )
+// );
+// $response->addHTML('</form>');
+// $response->addHTML('</div>'); // end canvas_outer
 
-$response->addHTML(
-    PMA_getDatabaseTables(
-        $tab_pos, $display_page, $tab_column,
-        $tables_all_keys, $tables_pk_or_unique_keys
-    )
-);
-$response->addHTML('</form>');
-$response->addHTML('</div>'); // end canvas_outer
+// $response->addHTML('<div id="pmd_hint"></div>');
+// $response->addHTML('<div id="designer"></div>');
 
-$response->addHTML('<div id="pmd_hint"></div>');
-
-$response->addHTML(PMA_getNewRelationPanel());
-$response->addHTML(PMA_getDeleteRelationPanel());
+// $response->addHTML(PMA_getNewRelationPanel());
+// $response->addHTML(PMA_getDeleteRelationPanel());
 
 if (isset($_REQUEST['query'])) {
     $response->addHTML(PMA_getOptionsPanel());
