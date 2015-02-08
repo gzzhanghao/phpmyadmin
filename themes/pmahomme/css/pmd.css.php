@@ -553,83 +553,49 @@ h2.active {
     cursor: pointer;
 }
 
-.side-menu {
-    float: left;
+<?php
+/**
+ * Designer page
+ */
+?>
+
+html,
+body,
+#page_content,
+#designer-container {
+    height: 100%;
+}
+
+#designer {
     position: relative;
-    width: auto;
-    height: auto;
-    background: #efefef;
-    border: 1px solid grey;
-    overflow: hidden;
-    z-index: 50;
 }
 
-.side-menu.right {
-    float: right;
-}
-
-.side-menu .hide {
-    display: none;
-}
-
-.side-menu a {
-    display: block;
-    float: none;
-    overflow: hidden;
-}
-
-.side-menu img,
-.side-menu .text {
-    float: left;
-}
-
-#name-panel {
-    border-bottom: 1px solid grey;
-    text-align: center;
-    background: #efefef;
-    width: 100%;
-    font-size: 1.2em;
-    padding: 10px;
-    font-weight: bold;
-}
-
-#container-form {
-    width: 100%;
+#designer .table {
     position: absolute;
-    left: 0;
-}
-
-.table {
-    position: absolute;
-    left: 0;
     top: 0;
+    left: 0;
     background: white;
     border: 1px solid #ccc;
-    overflow: hidden;
 }
 
-.table .header,
-.table .column {
+#designer .table .header,
+#designer .table .column {
     padding: 5px;
 }
 
-.table .header {
-    cursor: move;
+#designer .table .header {
     background: #efefef;
+    cursor: move;
 }
 
-.table .column {
-    padding-right: 2rem;
+#designer .table .column {
+    padding-right: 20px;
     cursor: pointer;
 }
 
-.table .sizer {
+#designer .table .sizer {
     position: absolute;
-    bottom: 0;
     right: 0;
-    cursor: ew-resize;
-}
-
-#tables {
-    position: relative;
+    bottom: 0;
+    cursor: el-resize;
 }
