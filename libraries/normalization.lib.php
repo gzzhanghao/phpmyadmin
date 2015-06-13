@@ -34,7 +34,7 @@ function PMA_getHtmlForColumnsList(
         $columnTypeList = $types[$colTypeCategory];
     }
     $GLOBALS['dbi']->selectDb($db, $GLOBALS['userlink']);
-    $columns = (array) $GLOBALS['dbi']->getColumns(
+    $columns = $GLOBALS['dbi']->getColumns(
         $db, $table, null,
         true, $GLOBALS['userlink']
     );
@@ -81,9 +81,6 @@ function PMA_getHtmlForCreateNewColumn(
     $content_cells = array();
     $available_mime = array();
     $mime_map = array();
-    $header_cells = PMA_getHeaderCells(
-        true, null, $cfgRelation['mimework']
-    );
     if ($cfgRelation['mimework'] && $GLOBALS['cfg']['BrowseMIME']) {
         $mime_map = PMA_getMIME($db, $table);
         $available_mime = PMA_getAvailableMIMEtypes();
@@ -92,7 +89,7 @@ function PMA_getHtmlForCreateNewColumn(
     for ($columnNumber = 0; $columnNumber < $num_fields; $columnNumber++) {
         $content_cells[$columnNumber] = PMA_getHtmlForColumnAttributes(
             $columnNumber, $columnMeta, '',
-            8, '', null, array(), null, null,
+            8, '', array(), null, null,
             $comments_map, null, true,
             array(), $cfgRelation,
             isset($available_mime)?$available_mime:array(), $mime_map
@@ -102,7 +99,9 @@ function PMA_getHtmlForCreateNewColumn(
     return PMA\Template::get('columns_definitions/table_fields_definitions')
         ->render(
             array(
-                'header_cells' => $header_cells,
+                'is_backup' => true,
+                'fields_meta' => null,
+                'mimework' => $cfgRelation['mimework'],
                 'content_cells' => $content_cells
             )
         );

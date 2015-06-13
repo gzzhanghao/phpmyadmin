@@ -1517,6 +1517,22 @@ class PMA_Table
     }
 
     /**
+     * Get meta info for fields in table
+     *
+     * @return mixed
+     */
+    public function getColumnsMeta()
+    {
+        $move_columns_sql_query = sprintf(
+            'SELECT * FROM %s.%s LIMIT 1',
+            PMA_Util::backquote($this->_db_name),
+            PMA_Util::backquote($this->_name)
+        );
+        $move_columns_sql_result = $this->_dbi->tryQuery($move_columns_sql_query);
+        return $this->_dbi->getFieldsMeta($move_columns_sql_result);
+    }
+
+    /**
      * Return UI preferences for this table from phpMyAdmin database.
      *
      * @return array
