@@ -12,6 +12,8 @@ if (! defined('PHPMYADMIN')) {
     exit;
 }
 
+use PMA\Controllers\ImportController;
+
 /**
  * We need way to disable external XML entities processing.
  */
@@ -63,9 +65,10 @@ class ImportXml extends ImportPlugin
     /**
      * Handles the whole import logic
      *
-     * @return void
+     * @param array $sql_query
+     * @param ImportController $controller
      */
-    public function doImport()
+    public function doImport($sql_query = array(), ImportController $controller = null)
     {
         global $error, $timeout_passed, $finished, $db;
 
@@ -78,7 +81,7 @@ class ImportXml extends ImportPlugin
          * it can process compressed files
          */
         while (! ($finished && $i >= $len) && ! $error && ! $timeout_passed) {
-            $data = PMA_importGetNextChunk();
+            $data = $controller->importGetNextChunk();
             if ($data === false) {
                 /* subtract data we didn't handle yet and stop processing */
                 $GLOBALS['offset'] -= strlen($buffer);
@@ -247,7 +250,7 @@ class ImportXml extends ImportPlugin
                 $isInTables = false;
                 $num_tables = count($tables);
                 for ($i = 0; $i < $num_tables; ++$i) {
-                    if (! strcmp($tables[$i][TBL_NAME], (string)$tbl_attr['name'])) {
+                    if (! strcmp($tables[$i][ImportController::TBL_NAME], (string)$tbl_attr['name'])) {
                         $isInTables = true;
                         break;
                     }
@@ -282,12 +285,12 @@ class ImportXml extends ImportPlugin
             for ($i = 0; $i < $num_tables; ++$i) {
                 $num_rows = count($rows);
                 for ($j = 0; $j < $num_rows; ++$j) {
-                    if (! strcmp($tables[$i][TBL_NAME], $rows[$j][TBL_NAME])) {
-                        if (! isset($tables[$i][COL_NAMES])) {
-                            $tables[$i][] = $rows[$j][COL_NAMES];
+                    if (! strcmp($tables[$i][ImportController::TBL_NAME], $rows[$j][ImportController::TBL_NAME])) {
+                        if (! isset($tables[$i][ImportController::COL_NAMES])) {
+                            $tables[$i][] = $rows[$j][ImportController::COL_NAMES];
                         }
 
-                        $tables[$i][ROWS][] = $rows[$j][ROWS];
+                        $tables[$i][ImportController::ROWS][] = $rows[$j][ImportController::ROWS];
                     }
                 }
             }
@@ -299,7 +302,7 @@ class ImportXml extends ImportPlugin
 
                 $len = count($tables);
                 for ($i = 0; $i < $len; ++$i) {
-                    $analyses[] = PMA_analyzeTable($tables[$i]);
+                    $analyses[] = $controller->analyzeTable($tables[$i]);
                 }
             }
         }
@@ -356,13 +359,13 @@ class ImportXml extends ImportPlugin
         }
 
         /* Created and execute necessary SQL statements from data */
-        PMA_buildSQL($db_name, $tables, $analyses, $create, $options);
+        $controller->buildSQL($db_name, $tables, $analyses, $create, $options);
 
         unset($analyses);
         unset($tables);
         unset($create);
 
         /* Commit any possible data in buffers */
-        PMA_importRunQuery();
+        $controller->importRunQuery();
     }
 }

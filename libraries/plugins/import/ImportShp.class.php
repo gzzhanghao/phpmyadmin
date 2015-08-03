@@ -10,6 +10,8 @@ if (! defined('PHPMYADMIN')) {
     exit;
 }
 
+use PMA\Controllers\ImportController;
+
 // Drizzle does not support GIS data types
 if (PMA_DRIZZLE) {
     $GLOBALS['skip_import'] = true;
@@ -273,8 +275,8 @@ class ImportShp extends ImportPlugin
         $analyses[] = PMA_analyzeTable($tables[0]);
 
         $table_no = 0; $spatial_col = 0;
-        $analyses[$table_no][TYPES][$spatial_col] = GEOMETRY;
-        $analyses[$table_no][FORMATTEDSQL][$spatial_col] = true;
+        $analyses[$table_no][ImportController::TYPES][$spatial_col] = ImportController::GEOMETRY;
+        $analyses[$table_no][ImportController::FORMATTEDSQL][$spatial_col] = true;
 
         // Set database name to the currently selected one, if applicable
         if (/*overload*/mb_strlen($db)) {

@@ -404,10 +404,11 @@ class ImportSql extends ImportPlugin
      * Handles the whole import logic
      *
      * @param array &$sql_data 2-element array with sql data
+     * @param PMA\Controllers\ImportController $controller
      *
      * @return void
      */
-    public function doImport(&$sql_data = array())
+    public function doImport(&$sql_data = array(), PMA\Controllers\ImportController $controller = null)
     {
         global $error, $timeout_passed;
 
@@ -439,7 +440,7 @@ class ImportSql extends ImportPlugin
 
         while (!$error && !$timeout_passed) {
             if (false === $delimiterFound) {
-                $newData = PMA_importGetNextChunk(200);
+                $newData = $controller->importGetNextChunk(200);
                 if ($newData === false) {
                     // subtract data we didn't handle yet and stop processing
                     $GLOBALS['offset'] -= $this->_dataLength;
@@ -465,7 +466,7 @@ class ImportSql extends ImportPlugin
                 continue;
             }
 
-            PMA_importRunQuery(
+            $controller->importRunQuery(
                 $this->_stringFctToUse['substr'](
                     $this->_data,
                     $this->_queryBeginPosition,
@@ -490,7 +491,7 @@ class ImportSql extends ImportPlugin
 
         if (! $timeout_passed) {
             //Commit any possible data in buffers
-            PMA_importRunQuery(
+            $controller->importRunQuery(
                 $this->_stringFctToUse['substr'](
                     $this->_data,
                     $this->_queryBeginPosition
@@ -500,7 +501,7 @@ class ImportSql extends ImportPlugin
                 $sql_data
             );
         }
-        PMA_importRunQuery('', '', false, $sql_data);
+        $controller->importRunQuery('', '', false, $sql_data);
     }
 
     /**

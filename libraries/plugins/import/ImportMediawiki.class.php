@@ -65,9 +65,10 @@ class ImportMediawiki extends ImportPlugin
     /**
      * Handles the whole import logic
      *
-     * @return void
+     * @param array $sql_query
+     * @param PMA\Controllers\ImportController $controller
      */
-    public function doImport()
+    public function doImport($sql_query = array(), $controller = null)
     {
         global $error, $timeout_passed, $finished;
 
@@ -94,7 +95,7 @@ class ImportMediawiki extends ImportPlugin
         $cur_table_name = "";
 
         while (! $finished && ! $error && ! $timeout_passed ) {
-            $data = PMA_importGetNextChunk();
+            $data = $controller->importGetNextChunk();
 
             if ($data === false) {
                 // Subtract data we didn't handle yet and stop processing
@@ -216,7 +217,7 @@ class ImportMediawiki extends ImportPlugin
                         // If the current line contains header cells
                         // ( marked with '!' ),
                         // it will be marked as table header
-                        if ($in_table_header ) {
+                        if (isset($in_table_header) && $in_table_header) {
                             // Set the header columns
                             $cur_temp_table_headers = $cur_temp_line;
                         } else {

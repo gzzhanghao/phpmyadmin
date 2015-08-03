@@ -9,7 +9,6 @@
 
 namespace PMA\Controllers\Table;
 
-use PMA\DI\Container;
 use PMA_Util;
 use PMA_Message;
 use PMA\Template;

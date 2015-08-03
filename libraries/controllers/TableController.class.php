@@ -8,8 +8,6 @@
 
 namespace PMA\Controllers;
 
-use PMA\DI\Container;
-
 if (!defined('PHPMYADMIN')) {
     exit;
 }

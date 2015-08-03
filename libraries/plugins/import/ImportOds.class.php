@@ -12,6 +12,8 @@ if (! defined('PHPMYADMIN')) {
     exit;
 }
 
+use PMA\Controllers\ImportController;
+
 /**
  * We need way to disable external XML entities processing.
  */
@@ -106,9 +108,10 @@ class ImportOds extends ImportPlugin
     /**
      * Handles the whole import logic
      *
-     * @return void
+     * @param array $sql_query
+     * @param \PMA\Controllers\ImportController $controller
      */
-    public function doImport()
+    public function doImport($sql_query = array(), PMA\Controllers\ImportController $controller = null)
     {
         global $db, $error, $timeout_passed, $finished;
 
@@ -121,7 +124,7 @@ class ImportOds extends ImportPlugin
          * it can process compressed files
          */
         while (! ($finished && $i >= $len) && ! $error && ! $timeout_passed) {
-            $data = PMA_importGetNextChunk();
+            $data = $controller->importGetNextChunk();
             if ($data === false) {
                 /* subtract data we didn't handle yet and stop processing */
                 $GLOBALS['offset'] -= strlen($buffer);
@@ -240,7 +243,7 @@ class ImportOds extends ImportPlugin
                             }
                         } else {
                             for ($i = 0; $i < $num_null; ++$i) {
-                                $col_names[] = PMA_getColumnAlphaName(
+                                $col_names[] = $controller->getColumnAlphaName(
                                     $col_count + 1
                                 );
                                 ++$col_count;
@@ -250,7 +253,7 @@ class ImportOds extends ImportPlugin
                         if (! $col_names_in_first_row) {
                             $tempRow[] = 'NULL';
                         } else {
-                            $col_names[] = PMA_getColumnAlphaName(
+                            $col_names[] = $controller->getColumnAlphaName(
                                 $col_count + 1
                             );
                         }
@@ -299,7 +302,7 @@ class ImportOds extends ImportPlugin
 
             /* Fill out column names */
             for ($i = count($col_names); $i < $max_cols; ++$i) {
-                $col_names[] = PMA_getColumnAlphaName($i + 1);
+                $col_names[] = $controller->getColumnAlphaName($i + 1);
             }
 
             /* Fill out all rows */
@@ -334,15 +337,15 @@ class ImportOds extends ImportPlugin
         for ($i = 0; $i < $num_tables; ++$i) {
             $num_rows = count($rows);
             for ($j = 0; $j < $num_rows; ++$j) {
-                if (strcmp($tables[$i][TBL_NAME], $rows[$j][TBL_NAME])) {
+                if (strcmp($tables[$i][ImportController::TBL_NAME], $rows[$j][ImportController::TBL_NAME])) {
                     continue;
                 }
 
-                if (! isset($tables[$i][COL_NAMES])) {
-                    $tables[$i][] = $rows[$j][COL_NAMES];
+                if (! isset($tables[$i][ImportController::COL_NAMES])) {
+                    $tables[$i][] = $rows[$j][ImportController::COL_NAMES];
                 }
 
-                $tables[$i][ROWS] = $rows[$j][ROWS];
+                $tables[$i][ImportController::ROWS] = $rows[$j][ImportController::ROWS];
             }
         }
 
@@ -354,7 +357,7 @@ class ImportOds extends ImportPlugin
 
         $len = count($tables);
         for ($i = 0; $i < $len; ++$i) {
-            $analyses[] = PMA_analyzeTable($tables[$i]);
+            $analyses[] = $controller->analyzeTable($tables[$i]);
         }
 
         /**
@@ -378,13 +381,13 @@ class ImportOds extends ImportPlugin
         $create = null;
 
         /* Created and execute necessary SQL statements from data */
-        PMA_buildSQL($db_name, $tables, $analyses, $create, $options);
+        $controller->buildSQL($db_name, $tables, $analyses, $create, $options);
 
         unset($tables);
         unset($analyses);
 
         /* Commit any possible data in buffers */
-        PMA_importRunQuery();
+        $controller->importRunQuery();
     }
 
     /**
